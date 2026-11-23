@@ -1,0 +1,361 @@
+/* THE CART DOCK — a bead of liquid glass in the bottom corner of a phone's
+   screen, under the thumb, and the cart as a sheet from the bottom. The
+   header (which stays at the top) has its own cart; the bead is the one that
+   can be reached one-handed. Nothing here shows on wider screens. */
+
+.bead,
+.layer {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .bead {
+    position: fixed;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    left: 16px;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #141313;
+    background:
+      radial-gradient(90% 60% at 30% 10%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 70%),
+      linear-gradient(140deg, rgba(255, 255, 255, 0.6), rgba(222, 219, 214, 0.42));
+    -webkit-backdrop-filter: blur(18px) saturate(1.8);
+    backdrop-filter: blur(18px) saturate(1.8);
+    box-shadow:
+      inset 0 1.5px 1px #fff,
+      inset 0 -1px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -8px 14px -10px rgba(255, 255, 255, 0.8),
+      0 10px 24px -10px rgba(40, 34, 30, 0.45);
+    cursor: pointer;
+    /* hidden until the cart holds something: it rises in from below */
+    opacity: 0;
+    transform: translateY(70px) scale(0.6);
+    pointer-events: none;
+    transition:
+      opacity 0.35s ease,
+      transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .bead[data-shown='1'] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .bead:active {
+    transform: scale(0.94);
+  }
+
+  .bead:focus-visible {
+    outline: 2px solid #7d1426;
+    outline-offset: 3px;
+  }
+
+  .icon {
+    display: grid;
+  }
+
+  .icon svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* each time something is added, the cart jumps */
+  .icon[data-bump='1'] {
+    animation: jump 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes jump {
+    0% {
+      transform: none;
+    }
+    30% {
+      transform: translateY(-5px) rotate(-8deg) scale(1.12);
+    }
+    60% {
+      transform: translateY(1px) rotate(4deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+
+  .count {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: linear-gradient(180deg, #96192f, #7d1426);
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.9),
+      0 4px 8px -3px rgba(125, 20, 38, 0.6);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1;
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────── the sheet ── */
+
+  .layer {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 0.5s;
+  }
+
+  .layer[data-open='1'] {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: 0;
+    background: rgba(40, 34, 30, 0.28);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  .layer[data-open='1'] .scrim {
+    opacity: 1;
+  }
+
+  .sheet {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 82dvh;
+    padding: 10px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    border-radius: 30px 30px 0 0;
+    color: #1b1918;
+    font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+    background:
+      radial-gradient(120% 40% at 20% 0%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 65%),
+      linear-gradient(170deg, rgba(250, 248, 245, 0.82), rgba(228, 225, 220, 0.86));
+    -webkit-backdrop-filter: blur(26px) saturate(1.8);
+    backdrop-filter: blur(26px) saturate(1.8);
+    box-shadow:
+      inset 0 1.5px 1px #fff,
+      0 -20px 50px -20px rgba(40, 34, 30, 0.45);
+    transform: translateY(105%);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .layer[data-open='1'] .sheet {
+    transform: none;
+  }
+
+  .grabber {
+    align-self: center;
+    width: 40px;
+    height: 5px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    background: rgba(20, 19, 19, 0.2);
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(20, 19, 19, 0.08);
+  }
+
+  .head h2 {
+    margin: 0;
+    color: #121111;
+    font-weight: 800;
+    font-size: 19px;
+    line-height: 1.5;
+    outline: none;
+  }
+
+  .head h2 span {
+    margin-inline-start: 6px;
+    color: #6c6761;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .close {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 1px 0.5px #fff, 0 3px 8px -4px rgba(40, 34, 30, 0.3);
+    cursor: pointer;
+  }
+
+  .close span::before,
+  .close span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 15px;
+    height: 1.5px;
+    margin: -0.75px 0 0 -7.5px;
+    border-radius: 1px;
+    background: #141313;
+    rotate: 45deg;
+  }
+
+  .close span::after {
+    rotate: -45deg;
+  }
+
+  .list {
+    display: grid;
+    gap: 10px;
+    margin: 14px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  .list li {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.95);
+  }
+
+  .thumb {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #d8d4ce, #cdc9c3);
+  }
+
+  .thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+  }
+
+  .text {
+    display: grid;
+    min-width: 0;
+    line-height: 1.6;
+  }
+
+  .text b {
+    overflow: hidden;
+    color: #121111;
+    font-weight: 800;
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .text span {
+    color: #6c6761;
+    font-size: 12.5px;
+  }
+
+  .remove {
+    padding: 8px 6px;
+    border: 0;
+    background: none;
+    color: #7d1426;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .note {
+    margin: 14px 0 0;
+    color: #6c6761;
+    font-size: 12.5px;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .primary,
+  .secondary {
+    display: grid;
+    place-items: center;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .primary {
+    background: linear-gradient(180deg, #96192f, #7d1426);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 10px 22px -12px rgba(125, 20, 38, 0.6);
+    color: #fff;
+  }
+
+  .secondary {
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow:
+      inset 0 1px 0.5px #fff,
+      inset 0 0 0 1px rgba(20, 19, 19, 0.12);
+    color: #141313;
+  }
+}
+
+@media (max-width: 820px) and (prefers-reduced-motion: reduce) {
+  .bead,
+  .sheet,
+  .scrim {
+    transition-duration: 0.01ms;
+  }
+
+  .icon[data-bump='1'],
+  .count {
+    animation: none;
+  }
+}

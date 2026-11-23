@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nafis",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "3210"],
+      "port": 3210
+    },
+    {
+      "name": "nilex",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:/Users/Toranj/nilex-b2b", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "nilix-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:/Users/Toranj/nilix-site", "run", "dev", "--", "--port", "4321"],
+      "port": 4321
+    },
+    {
+      "name": "ssi",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "C:\\Users\\Toranj\\nafis\\.claude\\ssi-dev.cmd"],
+      "port": 3300,
+      "autoPort": true
+    }
+  ]
+}

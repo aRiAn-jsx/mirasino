@@ -1,0 +1,478 @@
+/* THE SHOP — the filter, and the cards. Glass, ink and crimson as on every page
+   (site.module.css); what is here is only the shop's own furniture. */
+
+/* ─────────────────────────────────────────────────────────── filter ── */
+
+.filters {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  margin-top: clamp(24px, 4.5vh, 44px);
+  padding: clamp(14px, 1.6vw, 22px) clamp(16px, 2vw, 26px);
+}
+
+/* a grid item may not grow past its column because of a row of chips inside it */
+.filters > * {
+  min-width: 0;
+}
+
+.filterHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(20, 19, 19, 0.08);
+}
+
+.count {
+  margin: 0;
+  margin-inline-end: auto;
+  color: var(--white);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  color: var(--silver-2);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switchTrack {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(20, 19, 19, 0.16);
+  box-shadow: inset 0 1px 2px rgba(20, 19, 19, 0.18);
+  transition: background-color 0.35s;
+}
+
+.switchTrack span {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 2px 5px rgba(20, 19, 19, 0.25),
+    inset 0 -1px 1px rgba(20, 19, 19, 0.06);
+  transition: transform 0.45s var(--settle);
+}
+
+.switch input:checked + .switchTrack {
+  background: linear-gradient(180deg, var(--crimson-hi), var(--crimson));
+}
+
+/* the page reads right to left: "on" slides the knob to the left */
+.switch input:checked + .switchTrack span {
+  transform: translateX(-16px);
+}
+
+.switch input:focus-visible + .switchTrack {
+  outline: 2px solid var(--crimson);
+  outline-offset: 3px;
+}
+
+.clear {
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  color: var(--crimson);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.groupLabel {
+  flex: none;
+  width: 54px;
+  color: var(--silver-1);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* a small bead of glass; pressed, it turns ink */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.7),
+    0 2px 6px -2px rgba(40, 34, 30, 0.2);
+  color: var(--silver-3);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s var(--settle);
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed='true'] {
+  background: #1b1918;
+  color: #f6f2ec;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 4px 12px -4px rgba(20, 19, 19, 0.45);
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 0 0.5px rgba(20, 19, 19, 0.3);
+}
+
+/* ───────────────────────────────────────────────────────────── cards ── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr));
+  gap: clamp(16px, 2vw, 26px);
+  margin: clamp(22px, 4vh, 40px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 26px;
+}
+
+/* the picture hangs on a scrap of the gallery's wall, and fades into the glass below it */
+.media {
+  position: relative;
+  aspect-ratio: 4 / 3.1;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 60% at 50% 30%, rgba(255, 252, 246, 0.85), rgba(255, 252, 246, 0) 72%),
+    linear-gradient(180deg, #d8d4ce, #cdc9c3);
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0) 100%);
+}
+
+.media img {
+  position: absolute;
+  inset: 12% 9% 22%;
+  width: 82%;
+  height: 66%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 12px rgba(40, 30, 28, 0.3));
+  transition: transform 1.2s var(--settle), opacity 0.9s ease, filter 0.9s ease;
+}
+
+/* a close crop: the picture fills the frame and the card shows the knots */
+.media[data-crop='1'] img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card:hover .media img {
+  scale: 1.04;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0.5px #fff,
+    0 4px 10px -4px rgba(40, 34, 30, 0.3);
+  color: var(--crimson);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.badge span {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.body {
+  flex: 1;
+  padding: 4px 22px 0;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 4px;
+  color: var(--silver-1);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.eyebrow i {
+  width: 16px;
+  height: 1.5px;
+  background: var(--crimson);
+}
+
+.eyebrow span[dir='ltr'] {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+}
+
+.title {
+  margin: 0;
+  color: var(--white);
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.meta {
+  margin: 2px 0 0;
+  color: var(--silver-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.blurb {
+  display: -webkit-box;
+  margin: 10px 0 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--silver-1);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 22px 20px;
+}
+
+.footStart {
+  display: grid;
+  gap: 2px;
+}
+
+/* the way into the 3D room, with this piece already on its floor */
+.tryOn {
+  color: var(--crimson);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.tryOn:hover {
+  color: var(--crimson-hi);
+}
+
+.price {
+  color: var(--silver-1);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 21px;
+  background: linear-gradient(180deg, var(--crimson-hi), var(--crimson));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 10px 22px -12px rgba(125, 20, 38, 0.6);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.45s var(--settle), box-shadow 0.45s var(--settle), background-color 0.3s;
+}
+
+.buy:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 14px 28px -12px rgba(125, 20, 38, 0.7);
+}
+
+.buy:active {
+  transform: scale(0.98);
+}
+
+.buy svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.buy[data-added='1'] {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(125, 20, 38, 0.45),
+    inset 0 1px 0 #fff;
+  color: var(--crimson);
+}
+
+/* ─────────────────────────────────── the order things arrive in a card ── */
+
+.card .media img,
+.card .body,
+.card .foot {
+  transition-delay: var(--delay);
+}
+
+.card[data-seen='0'] .media img {
+  opacity: 0;
+  filter: blur(8px) drop-shadow(0 12px 12px rgba(40, 30, 28, 0.3));
+}
+
+.card[data-seen='0'] .body,
+.card[data-seen='0'] .foot {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.card .body,
+.card .foot {
+  transition:
+    opacity 0.8s ease calc(var(--delay) + 0.25s),
+    transform 0.9s var(--settle) calc(var(--delay) + 0.25s);
+}
+
+.card .foot {
+  transition-delay: calc(var(--delay) + 0.42s);
+}
+
+/* ───────────────────────────────────────────────────────────── small ── */
+
+@media (max-width: 720px) {
+  .filters {
+    gap: 14px;
+  }
+
+  .filterHead {
+    gap: 8px 14px;
+  }
+
+  .group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .groupLabel {
+    width: auto;
+  }
+
+  /* each group is one row that scrolls sideways inside the panel, its ends fading
+     out so it is plain there is more of it */
+  .chips {
+    flex-wrap: nowrap;
+    margin-inline: -16px;
+    padding: 2px 16px 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    flex: none;
+  }
+
+  .body {
+    padding-inline: 18px;
+  }
+
+  .foot {
+    padding: 14px 18px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card[data-seen='0'] .media img,
+  .card[data-seen='0'] .body,
+  .card[data-seen='0'] .foot {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}

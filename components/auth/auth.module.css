@@ -1,0 +1,1014 @@
+/* THE DOOR — signing in and signing up.
+
+   A viewing room in the gallery: the soft grey wall under one light, a piece
+   on its rod (the gallery's five take turns), its reflection in the polished
+   floor. In front of it, held up like a membership card, a sheet of liquid
+   glass — so the glass is always full of rug. Ink for the words, crimson for
+   the one thing to press. --white is the strongest tone, --silver-1 the
+   quietest. */
+
+.stage {
+  --black: #080808;
+  --ink: #141313;
+  --line: rgba(20, 19, 19, 0.12);
+  --silver-1: #6c6761;
+  --silver-2: #3a3633;
+  --silver-3: #1b1918;
+  --white: #121111;
+  --crimson: #7d1426;
+  --crimson-hi: #96192f;
+  --danger: #9b1b30;
+  --settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --gutter: clamp(20px, 4vw, 56px);
+
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(48% 52% at 34% 26%, rgba(255, 251, 244, 0.95), rgba(255, 251, 244, 0) 72%),
+    linear-gradient(180deg, #ccc8c2 0%, #d7d3cd 46%, #d2cec8 100%);
+  color: var(--silver-3);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stage :focus-visible {
+  outline: 2px solid var(--crimson);
+  outline-offset: 3px;
+}
+
+/* ──────────────────────────────────────────────────────── the room ── */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* the light, falling from above onto the piece */
+.beam {
+  position: absolute;
+  top: -8%;
+  left: 34%;
+  width: 62vw;
+  height: 78%;
+  translate: -50% 0;
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.7), rgba(255, 252, 246, 0.06) 80%, transparent);
+  clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+  filter: blur(30px);
+}
+
+/* where the wall meets the floor: a shadow gap, then polished concrete */
+.floor {
+  position: absolute;
+  inset: 80% 0 0 0;
+  background:
+    radial-gradient(50% 120% at 34% 0%, rgba(255, 252, 246, 0.35), rgba(255, 252, 246, 0) 70%),
+    linear-gradient(180deg, #b9b5af, #a9a59f);
+  box-shadow:
+    0 -3px 0 #2a2725,
+    0 -4px 10px rgba(20, 19, 19, 0.25);
+}
+
+.hang,
+.reflection {
+  position: absolute;
+  left: 34%;
+  width: min(62vw, 980px);
+  aspect-ratio: 2000 / 1117;
+  translate: -50% 0;
+}
+
+.hang {
+  bottom: 30%;
+  animation: settleIn 1.4s var(--settle) both;
+}
+
+@keyframes settleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+.rod {
+  position: absolute;
+  top: 5.4%;
+  left: 7%;
+  right: 7%;
+  height: 4px;
+  border-radius: 2px;
+  background: #121111;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.rod::before,
+.rod::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #121111;
+}
+
+.rod::before {
+  right: -6px;
+}
+
+.rod::after {
+  left: -6px;
+}
+
+.rugs {
+  position: absolute;
+  inset: 0;
+}
+
+.hang .rugs {
+  filter: drop-shadow(0 26px 24px rgba(40, 30, 28, 0.36));
+}
+
+.rugs img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  animation: turnOver 35s linear infinite;
+  animation-delay: calc(var(--i) * 7s);
+}
+
+/* five pieces, seven seconds each: one fades up as the last fades away */
+@keyframes turnOver {
+  0% {
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* the floor gives the piece back, faint and soft */
+.reflection {
+  top: 81%;
+  transform: scaleY(-1);
+  opacity: 0.22;
+  filter: blur(6px);
+  -webkit-mask-image: linear-gradient(0deg, #000 0%, transparent 55%);
+  mask-image: linear-gradient(0deg, #000 0%, transparent 55%);
+}
+
+/* which piece is on the rod */
+.names {
+  position: absolute;
+  left: 34%;
+  bottom: calc(20% + 18px);
+  width: min(62vw, 980px);
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  translate: -50% 0;
+}
+
+.names li {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--silver-1);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  animation: turnOver 35s linear infinite;
+  animation-delay: calc(var(--i) * 7s);
+}
+
+.names b {
+  color: var(--white);
+  font-weight: 800;
+}
+
+.names span[dir='ltr'] {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+}
+
+.nameDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--crimson);
+  box-shadow: 0 0 0 3px rgba(125, 20, 38, 0.15);
+}
+
+/* ─────────────────────────────────────────────────────── the frame ── */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: clamp(18px, 3.2vh, 32px) var(--gutter);
+}
+
+.brand {
+  color: var(--white);
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-weight: 500;
+  font-size: clamp(18px, 1.3vw, 23px);
+  letter-spacing: 0.15em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.95),
+    0 4px 12px -6px rgba(40, 34, 30, 0.3);
+  color: var(--silver-3);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 0.4s var(--settle);
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.back svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.5s var(--settle);
+}
+
+.back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* the card stands to the reading side, over the right edge of the piece */
+.center {
+  flex: 1;
+  display: grid;
+  align-items: center;
+  justify-items: start;
+  padding: clamp(8px, 2vh, 24px) clamp(20px, 9vw, 150px) clamp(24px, 5vh, 56px);
+}
+
+/* ─────────────────────────────────────────────── the membership card ── */
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: clamp(22px, 2.6vw, 34px);
+  border-radius: 32px;
+  color: var(--silver-3);
+  background:
+    radial-gradient(120% 50% at 15% 0%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(236, 233, 229, 0.28) 42%, rgba(210, 206, 201, 0.26) 62%, rgba(255, 255, 255, 0.4));
+  -webkit-backdrop-filter: blur(28px) saturate(1.9) brightness(1.06);
+  backdrop-filter: blur(28px) saturate(1.9) brightness(1.06);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 1px rgba(255, 255, 255, 0.55),
+    inset 1.5px 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 -20px 30px -20px rgba(255, 255, 255, 0.65),
+    inset 0 14px 28px -22px rgba(80, 74, 68, 0.3),
+    0 2px 4px rgba(40, 34, 30, 0.08),
+    0 30px 70px -26px rgba(40, 34, 30, 0.42);
+  animation: rise 1s var(--settle) 0.15s both;
+}
+
+/* the rim of the glass: brightest where the light comes from */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.2) 30%, rgba(150, 145, 140, 0.25) 58%, rgba(255, 255, 255, 0.85));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.98);
+  }
+}
+
+.ticket {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* the house's seal, pressed in crimson */
+.seal {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #a52038, var(--crimson) 60%, #5e0d1b);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.25),
+    0 6px 14px -6px rgba(125, 20, 38, 0.6);
+  color: #fff;
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.ticketText {
+  display: grid;
+  color: var(--silver-1);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.ticketText b {
+  color: var(--white);
+  font-weight: 800;
+  font-size: 14.5px;
+}
+
+.ticketMark {
+  margin-inline-start: auto;
+  color: var(--silver-1);
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+}
+
+/* tear here */
+.perforation {
+  position: relative;
+  height: 1px;
+  margin: 18px calc(-1 * clamp(22px, 2.6vw, 34px)) 20px;
+  background: repeating-linear-gradient(90deg, rgba(20, 19, 19, 0.24) 0 6px, transparent 6px 12px);
+}
+
+/* re-keyed when the side changes, so the words turn over */
+.titles {
+  animation: words 0.7s var(--settle) both;
+}
+
+@keyframes words {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.title {
+  margin: 0;
+  color: var(--white);
+  font-weight: 900;
+  font-size: clamp(28px, 2.6vw, 36px);
+  line-height: 1.35;
+}
+
+.sub {
+  margin: 4px 0 0;
+  color: var(--silver-2);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* ── the selector: a bead of clear glass that slides under the chosen word ── */
+
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 48px;
+  margin: clamp(16px, 2.6vh, 22px) 0 clamp(16px, 2.4vh, 20px);
+  padding: 4px;
+  border-radius: 24px;
+  background: rgba(120, 114, 108, 0.16);
+  box-shadow:
+    inset 0 1px 3px rgba(40, 34, 30, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.tabs a {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: var(--silver-1);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.45s var(--settle);
+}
+
+.tabs a:hover,
+.tabs a[aria-current='page'] {
+  color: var(--white);
+}
+
+.thumb {
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: 4px;
+  width: calc(50% - 4px);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.82));
+  box-shadow:
+    inset 0 -1px 1px rgba(40, 34, 30, 0.08),
+    0 1px 1px rgba(40, 34, 30, 0.12),
+    0 6px 16px -6px rgba(40, 34, 30, 0.35);
+  transition: transform 0.6s var(--settle);
+}
+
+/* the page reads right to left: the second word is to the left */
+.card[data-mode='register'] .thumb {
+  transform: translateX(-100%);
+}
+
+/* ────────────────────────────────────────────────────────────── form ── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 12px;
+}
+
+.field label {
+  color: var(--silver-2);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.control {
+  position: relative;
+}
+
+.control input,
+.control select {
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow:
+    inset 0 1px 3px rgba(60, 54, 48, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+  color: var(--white);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.4;
+  transition: box-shadow 0.4s var(--settle), background-color 0.4s;
+}
+
+/* a menu: the arrow sits at the end of the line, left of the text in this right-to-left page */
+.control select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-left: 42px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 4.4 6 8l3.6-3.6' fill='none' stroke='%233c3630' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.control select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control select option {
+  color: #3c3630;
+  background: #fbf8f3;
+}
+
+.control input[dir='ltr'] {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+/* room for the eye, which sits where left-to-right text ends */
+.control input[data-trailing] {
+  padding-right: 52px;
+}
+
+.control input::placeholder {
+  color: #8f8a84;
+}
+
+.control input:hover,
+.control select:hover {
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.control input:focus,
+.control select:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(125, 20, 38, 0.7),
+    0 0 0 4px rgba(125, 20, 38, 0.12);
+}
+
+.field[data-invalid] .control input,
+.field[data-invalid] .control select {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(155, 27, 48, 0.75),
+    inset 0 1px 3px rgba(60, 54, 48, 0.12);
+}
+
+/* the browser's own fill for a remembered password, kept to the glass */
+.control input:-webkit-autofill {
+  -webkit-text-fill-color: var(--white);
+  caret-color: var(--white);
+  transition: background-color 99999s;
+}
+
+.eye {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--silver-1);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.eye:hover,
+.eye[aria-pressed='true'] {
+  color: var(--white);
+}
+
+.eye svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hint,
+.error {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.hint {
+  color: var(--silver-1);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: var(--danger);
+  font-weight: 500;
+  animation: words 0.4s var(--settle) both;
+}
+
+.warn {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin-top: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(155, 27, 48, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(155, 27, 48, 0.3);
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.7;
+  animation: words 0.45s var(--settle) both;
+}
+
+/* how strong a new password is: four bars and, beside them, the word */
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.meterBars {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.meterBars i {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(20, 19, 19, 0.12);
+  transition: background-color 0.4s;
+}
+
+.meter[data-level='1'] .meterBars i:nth-child(-n + 1),
+.meter[data-level='2'] .meterBars i:nth-child(-n + 2),
+.meter[data-level='3'] .meterBars i:nth-child(-n + 3),
+.meter[data-level='4'] .meterBars i:nth-child(-n + 4) {
+  background: #3a3633;
+}
+
+.meter[data-level='1'] .meterBars i:first-child {
+  background: var(--danger);
+}
+
+.meter[data-level='4'] .meterBars i {
+  background: #1b1918;
+}
+
+.meterLabel {
+  flex: none;
+  color: var(--silver-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* opens in place; the row inside is clipped while it does */
+.reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.6s var(--settle), opacity 0.35s;
+}
+
+.reveal > div {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.reveal[data-open='1'] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.6s var(--settle), opacity 0.5s 0.12s;
+}
+
+/* a focus ring is drawn outside its field: give it room once the row is open */
+.reveal[data-open='1'] > div {
+  margin: -6px;
+  padding: 6px;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding-bottom: 4px;
+  color: var(--silver-2);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.remember input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.box {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(20, 19, 19, 0.28);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.box svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.remember input:checked + .box {
+  background: linear-gradient(180deg, var(--crimson-hi), var(--crimson));
+  box-shadow: none;
+}
+
+.remember input:checked + .box svg {
+  opacity: 1;
+}
+
+.remember input:focus-visible + .box {
+  outline: 2px solid var(--crimson);
+  outline-offset: 3px;
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 26px;
+  background: linear-gradient(180deg, var(--crimson-hi), var(--crimson));
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 12px 28px -12px rgba(125, 20, 38, 0.65);
+  transition: transform 0.5s var(--settle), box-shadow 0.5s var(--settle), opacity 0.3s;
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 18px 34px -12px rgba(125, 20, 38, 0.75);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+}
+
+.submit:disabled {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation: turn 0.8s linear infinite;
+}
+
+@keyframes turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.other {
+  margin: clamp(14px, 2.4vh, 20px) 0 0;
+  color: var(--silver-2);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.other a {
+  color: var(--crimson);
+  font-weight: 700;
+  box-shadow: inset 0 -1.5px 0 rgba(125, 20, 38, 0.35);
+  transition: box-shadow 0.4s;
+}
+
+.other a:hover {
+  box-shadow: inset 0 -1.5px 0 var(--crimson);
+}
+
+/* the way back, for the small layout where the header's own is out of reach */
+.home {
+  display: none;
+  margin: 6px 0 0;
+  color: var(--silver-1);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+/* ───────────────────────────────────────────────── the account page ── */
+
+.account {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(18px, 3vw, 40px);
+  align-items: center;
+  margin-top: clamp(26px, 5vh, 56px);
+  padding: clamp(20px, 2.6vw, 36px);
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 24px);
+  min-width: 0;
+}
+
+.initial {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(58px, 6vw, 76px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #a52038, #7d1426 60%, #5e0d1b);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 8px 18px -8px rgba(125, 20, 38, 0.6);
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(24px, 2.4vw, 30px);
+  line-height: 1;
+}
+
+.whoName {
+  margin: 0;
+  color: var(--white);
+  font-weight: 800;
+  font-size: clamp(19px, 1.9vw, 25px);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.whoMeta {
+  margin: 0;
+  color: var(--silver-2);
+  font-size: 14.5px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.whoMeta [dir='ltr'] {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ───────────────────────────────────────────────────────────── small ── */
+
+/* the card goes to the middle, the piece above it */
+@media (max-width: 940px) {
+  .center {
+    justify-items: center;
+    align-items: start;
+    padding-top: clamp(150px, 30vw, 300px);
+  }
+
+  .hang,
+  .names,
+  .beam,
+  .reflection {
+    left: 50%;
+  }
+
+  .hang {
+    top: 70px;
+    bottom: auto;
+    width: min(92vw, 640px);
+  }
+
+  .beam {
+    width: 110vw;
+    height: 46%;
+  }
+
+  .names,
+  .reflection,
+  .floor {
+    display: none;
+  }
+
+  .home {
+    display: block;
+  }
+
+  .account {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .back {
+    display: none;
+  }
+
+  .ticketMark {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .titles,
+  .hang,
+  .error,
+  .notice {
+    animation: none;
+  }
+
+  /* no turning over: the first piece simply hangs there */
+  .rugs img,
+  .names li {
+    animation: none;
+  }
+
+  .rugs img:first-child,
+  .names li:first-child {
+    opacity: 1;
+  }
+
+  .stage *,
+  .stage *::before,
+  .stage *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

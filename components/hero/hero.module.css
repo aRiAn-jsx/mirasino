@@ -1,0 +1,1464 @@
+/* ───────────────────────────────────────────────────────────── frame ── */
+
+/* Tokens. Over the gallery wall the words are ink: --white is the strongest
+   tone and --silver-1 the quietest, whichever way round that is. Each piece of
+   dark glass (the card, the dial, the menu) and the dark room turn them back
+   to light. Crimson is the one colour that is not in the room's light. */
+.hero {
+  --black: #080808;
+  --ink: #141313;
+  --graphite: #1a1c20;
+  --silver-1: #6c6761;
+  --silver-2: #3a3633;
+  --silver-3: #1b1918;
+  --white: #121111;
+  --paper: #f3efe9;
+  --crimson: #7d1426;
+  --crimson-hi: #96192f;
+  --crimson-glow: rgba(125, 20, 38, 0.42);
+  --gutter-x: clamp(20px, 3.3vw, 60px);
+  --gutter-y: clamp(16px, 3.4vh, 40px);
+  --settle: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 400px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--black);
+  color: var(--silver-3);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', 'Jost', Tahoma, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.hero button {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.hero button:focus-visible,
+.hero a:focus-visible {
+  outline: 2px solid var(--crimson);
+  outline-offset: 3px;
+}
+
+/* the dark room: light words again */
+.dark {
+  --white: #f6f2ec;
+  --silver-3: #ebe5de;
+  --silver-2: #c8c0b7;
+  --silver-1: #978e85;
+  --ink: #141313;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero[data-cursor-on='1'],
+  .hero[data-cursor-on='1'] button,
+  .hero[data-cursor-on='1'] a {
+    cursor: none;
+  }
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.scene canvas {
+  display: block;
+}
+
+/* covers the first frames, and carries the reduced-motion fades */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: var(--black);
+  pointer-events: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* anything the intro brings in starts absent */
+.hero[data-phase='boot'] [data-intro] {
+  opacity: 0;
+}
+
+/* everything that is not the room. When the lamp goes out, it goes with it. */
+.chrome {
+  transition: opacity 0.9s var(--settle) 0.45s;
+}
+
+.hero[data-dark='1'] .chrome {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.hero[data-dark='1'] .chrome,
+.hero[data-dark='1'] .chrome * {
+  pointer-events: none !important;
+}
+
+/* resting chrome sits back at 70 % and comes forward on approach */
+.quiet {
+  opacity: 0.9;
+  transition: opacity 0.5s var(--settle);
+}
+
+.quiet:hover,
+.quiet:focus-within {
+  opacity: 1;
+}
+
+/* ──────────────────────────────────────────────────────────── header ── */
+
+.header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gutter-y) var(--gutter-x);
+  pointer-events: none;
+}
+
+.header > * {
+  pointer-events: auto;
+}
+
+.burger {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -9px;
+  color: var(--silver-3);
+}
+
+.burgerLines {
+  display: grid;
+  gap: 7px;
+  width: 26px;
+}
+
+.burgerLines i {
+  display: block;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform-origin: left center;
+  transition: width 0.55s var(--settle);
+}
+
+.burgerLines i:nth-child(1) {
+  width: 26px;
+}
+
+.burgerLines i:nth-child(2) {
+  width: 16px;
+}
+
+/* line reflow: the two rules trade lengths */
+.burger:hover .burgerLines i:nth-child(1),
+.burger:focus-visible .burgerLines i:nth-child(1) {
+  width: 16px;
+}
+
+.burger:hover .burgerLines i:nth-child(2),
+.burger:focus-visible .burgerLines i:nth-child(2) {
+  width: 26px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.6vw, 26px);
+}
+
+.brand {
+  display: block;
+  color: var(--white);
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-weight: 400;
+  font-weight: 500;
+  font-size: clamp(17px, 1.24vw, 23px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.brandInner {
+  display: inline-block;
+  letter-spacing: 0.15em;
+  /* tracking adds a trailing gap; pull the mark back to the gutter */
+  margin-right: -0.15em;
+}
+
+.sound {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--silver-3);
+}
+
+.soundBars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 12px;
+}
+
+.soundBars i {
+  width: 1.5px;
+  border-radius: 1px;
+  height: var(--h);
+  background: currentColor;
+  transform-origin: center;
+  transition: height 0.55s var(--settle), opacity 0.4s;
+  animation: level 2.6s ease-in-out infinite;
+  animation-delay: var(--d);
+}
+
+.sound[aria-pressed='false'] .soundBars i {
+  height: 1px;
+  opacity: 0.75;
+  animation: none;
+}
+
+@keyframes level {
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.headerTools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.cart {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: var(--silver-3);
+}
+
+.cart svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cartCount {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--crimson);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 15px;
+  text-align: center;
+}
+
+/* someone is signed in: a small steady light on the account mark */
+.signedIn {
+  position: absolute;
+  top: 7px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--crimson);
+  box-shadow: 0 0 0 2px #e6e2dd;
+}
+
+/* ────────────────────────────────────────────────────────────── menu ── */
+
+.menu {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.8s;
+}
+
+.menu[data-open='1'] {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.menuScrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(40, 34, 30, 0.16) !important;
+  opacity: 0;
+  transition: opacity 0.7s var(--settle);
+}
+
+.menu[data-open='1'] .menuScrim {
+  opacity: 1;
+}
+
+/* a leaf of glass that slides in over the room */
+.menuPanel {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
+  width: min(410px, 88vw);
+  padding: var(--gutter-y) clamp(24px, 3vw, 46px) clamp(24px, 4vh, 44px);
+  color: var(--silver-3);
+  background:
+    radial-gradient(120% 50% at 0% 0%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.5), rgba(226, 223, 218, 0.36) 50%, rgba(205, 201, 196, 0.42));
+  -webkit-backdrop-filter: blur(30px) saturate(1.8) brightness(1.05);
+  backdrop-filter: blur(30px) saturate(1.8) brightness(1.05);
+  box-shadow:
+    inset -1.5px 0 1px rgba(255, 255, 255, 0.85),
+    inset -14px 0 24px -16px rgba(255, 255, 255, 0.6),
+    30px 0 70px -30px rgba(40, 34, 30, 0.35);
+  transform: translateX(-102%);
+  transition: transform 0.85s var(--settle);
+}
+
+.menu[data-open='1'] .menuPanel {
+  transform: none;
+}
+
+.menuClose {
+  position: relative;
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  margin-inline-end: -9px;
+  color: var(--silver-3);
+}
+
+.menuClose span::before,
+.menuClose span::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 9px;
+  width: 26px;
+  height: 1px;
+  background: currentColor;
+  transition: rotate 0.7s var(--settle);
+}
+
+.menu[data-open='1'] .menuClose span::before {
+  rotate: 45deg;
+}
+
+.menu[data-open='1'] .menuClose span::after {
+  rotate: -45deg;
+}
+
+.menuList {
+  display: grid;
+  gap: 2px;
+  margin: auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menuList li {
+  opacity: 0;
+  transform: translateX(-22px);
+  transition: opacity 0.7s var(--settle), transform 0.9s var(--settle);
+}
+
+.menu[data-open='1'] .menuList li {
+  opacity: 1;
+  transform: none;
+}
+
+.menuList a {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 6px 0;
+  color: var(--silver-3);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-weight: 600;
+  font-size: clamp(24px, 3.9vh, 36px);
+  line-height: 1.6;
+  text-decoration: none;
+  transition: color 0.4s var(--settle), padding 0.7s var(--settle);
+}
+
+.menuList a:hover,
+.menuList a:focus-visible {
+  padding-inline-start: 10px;
+  color: var(--white);
+}
+
+.menuIndex {
+  color: var(--silver-1);
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+}
+
+.menuCount {
+  align-self: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 11px;
+  background: var(--crimson);
+  color: #fff;
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+}
+
+.menuFoot {
+  margin: 0;
+  color: var(--silver-1);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-size: 15px;
+}
+
+/* ───────────────────────────────────────────── story (right of frame) ── */
+
+.story {
+  position: absolute;
+  z-index: 5;
+  top: 23%;
+  right: var(--gutter-x);
+  width: clamp(178px, 14.8vw, 304px);
+  text-align: right;
+  pointer-events: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--white);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-weight: 800;
+  /* never more than 4 % of the frame height */
+  font-size: clamp(18px, min(3.6vh, 2.1vw), 40px);
+  line-height: 1.45;
+  /* no tracking on connected script — scale is carried by size and leading */
+  letter-spacing: 0;
+  white-space: nowrap;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  text-rendering: optimizeLegibility;
+}
+
+.titleMask {
+  display: inline-block;
+  /* air for descenders and dots so the reveal mask never bites the glyphs */
+  padding: 0.12em 0.14em 0.22em;
+  margin: -0.12em -0.14em -0.22em;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+/* the piece's own card: a sheet of liquid glass — clear, grey, its edges catching the
+   light like a lens; the same glass as the dial's */
+.piece {
+  position: relative;
+  margin-top: clamp(12px, 2.2vh, 26px);
+  padding: clamp(13px, 1.25vw, 24px) clamp(14px, 1.3vw, 24px) clamp(14px, 1.35vw, 26px);
+  border-radius: clamp(14px, 1.25vw, 24px);
+  /* each line turns over on its own top edge, like the cloth */
+  perspective: 700px;
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  color: var(--silver-3);
+  background:
+    radial-gradient(120% 55% at 18% 0%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.46), rgba(232, 229, 225, 0.24) 42%, rgba(208, 204, 199, 0.22) 60%, rgba(255, 255, 255, 0.36));
+  -webkit-backdrop-filter: blur(22px) saturate(1.8) brightness(1.05);
+  backdrop-filter: blur(22px) saturate(1.8) brightness(1.05);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.5),
+    inset 1px 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 -16px 26px -18px rgba(255, 255, 255, 0.6),
+    inset 0 12px 24px -20px rgba(80, 74, 68, 0.28),
+    0 1px 2px rgba(40, 34, 30, 0.08),
+    0 18px 42px -16px rgba(40, 34, 30, 0.3);
+}
+
+.piece::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.18) 30%,
+    rgba(150, 145, 140, 0.22) 58%,
+    rgba(255, 255, 255, 0.75)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+.piece [data-line] {
+  display: block;
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.pieceMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  color: var(--silver-1);
+  font-size: clamp(10.5px, 0.72vw, 13px);
+  line-height: 1.4;
+}
+
+.pieceMeta[data-line] {
+  display: flex;
+}
+
+.metaNum {
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--silver-2);
+}
+
+.pieceMeta i {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: #c03a52;
+}
+
+.pieceTitle {
+  margin: 0 0 clamp(8px, 1.4vh, 14px);
+  color: var(--white);
+  font-weight: 700;
+  font-size: clamp(14px, min(2.5vh, 1.45vw), 27px);
+  line-height: 1.5;
+}
+
+.pieceText {
+  margin: 0;
+  color: var(--silver-2);
+  font-weight: 400;
+  font-size: clamp(10.5px, min(1.55vh, 0.86vw), 15.5px);
+  line-height: 2;
+}
+
+.specs {
+  margin: clamp(12px, 2vh, 20px) 0 0;
+  padding: clamp(10px, 1.6vh, 16px) 0 0;
+  list-style: none;
+  border-top: 1px solid rgba(20, 19, 19, 0.1);
+  color: var(--silver-1);
+  font-weight: 400;
+  font-size: clamp(10px, min(1.4vh, 0.8vw), 13.5px);
+  line-height: 2;
+}
+
+/* the primary action: crimson, the one colour the room's light does not bring */
+.buyRow {
+  margin-top: clamp(12px, 1.9vh, 20px);
+}
+
+.buy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  height: clamp(38px, 4.6vh, 48px);
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--crimson-hi), var(--crimson)) !important;
+  color: #fff !important;
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: clamp(12.5px, min(1.7vh, 0.98vw), 16px) !important;
+  line-height: 1 !important;
+  pointer-events: auto;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 28px -14px var(--crimson-glow);
+  transition: transform 0.5s var(--settle), box-shadow 0.5s var(--settle), background-color 0.5s var(--settle), color 0.5s var(--settle);
+}
+
+/* a soft band of shade that crosses the button once on approach */
+.buy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0) 36%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0) 64%);
+  translate: -110% 0;
+  transition: translate 0.95s var(--settle);
+  pointer-events: none;
+}
+
+.buy:hover,
+.buy:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 18px 34px -14px rgba(125, 20, 38, 0.6);
+}
+
+.buy:hover::after {
+  translate: 110% 0;
+}
+
+.buy:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.buy svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* once the piece is in the cart the button steps back to an outline */
+.buy[data-added='1'] {
+  background: rgba(255, 255, 255, 0.4) !important;
+  color: var(--crimson) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(125, 20, 38, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ───────────────────────────────────────────────── collection dial ── */
+
+.glassWrap {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* a wheel of smoked glass, half-sunk into the edge of the frame; the
+   collection rides its rim as small pictures of the rugs themselves */
+.dial {
+  --glass-blur: 24px;
+  --R: 200px; /* radius of the wheel */
+  --peek: 138px; /* how much of it shows */
+  --orbit: 136px; /* the radius the pictures ride at */
+  --thumb: 78px;
+  --arrow: 58deg; /* how far round from the crown the two keys sit */
+  --gx: 30%;
+  --gy: 8%;
+  /* centre of the wheel, in the dial's own box */
+  --cx: calc(var(--peek) - var(--R));
+  --cy: var(--R);
+  position: relative;
+  display: block;
+  width: var(--peek);
+  height: calc(var(--R) * 2);
+}
+
+.dialDisc {
+  position: absolute;
+  left: calc(var(--cx) - var(--R));
+  top: calc(var(--cy) - var(--R));
+  width: calc(var(--R) * 2);
+  height: calc(var(--R) * 2);
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 84% 22%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.36), rgba(226, 223, 218, 0.24) 55%, rgba(200, 196, 191, 0.34));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.8) brightness(1.05);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.8) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.6),
+    inset -2px 0 1.5px rgba(255, 255, 255, 0.9),
+    inset -22px 0 34px -22px rgba(255, 255, 255, 0.7),
+    inset 18px 0 30px -24px rgba(80, 74, 68, 0.22),
+    0 18px 44px -18px rgba(40, 34, 30, 0.32);
+}
+
+/* rim: brightest where the wheel turns toward the light */
+.dialDisc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 20deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.2) 22%,
+    rgba(255, 255, 255, 0.7) 46%,
+    rgba(150, 145, 140, 0.2) 70%,
+    rgba(255, 255, 255, 0.95)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+.glassSheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    170px circle at calc(var(--gx) - var(--cx) + var(--R)) calc(var(--gy) - var(--cy) + var(--R)),
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0) 62%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+/* the path the pictures travel, and a mark at the crown where one comes to rest */
+.dialTrack {
+  position: absolute;
+  left: calc(var(--cx) - var(--orbit));
+  top: calc(var(--cy) - var(--orbit));
+  width: calc(var(--orbit) * 2);
+  height: calc(var(--orbit) * 2);
+  border: 1px solid rgba(20, 19, 19, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.dialNotch {
+  position: absolute;
+  left: calc(var(--cx) + var(--R) - 9px);
+  top: calc(var(--cy) - 0.5px);
+  width: 9px;
+  height: 1.5px;
+  background: rgba(20, 19, 19, 0.7);
+  pointer-events: none;
+}
+
+.dialOrbit {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  width: 0;
+  height: 0;
+}
+
+/* placed by GlassControl: rotate → out along the radius → rotate back, so each
+   picture stays upright as it travels */
+.dialItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--thumb);
+  translate: -50% -50%;
+  will-change: transform, opacity;
+}
+
+.dialThumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 320 / 179;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 8px 18px -8px rgba(40, 34, 30, 0.45);
+  transition: box-shadow 0.5s var(--settle);
+}
+
+.dialThumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dialItem:hover .dialThumb,
+.dialItem:focus-visible .dialThumb {
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    0 12px 22px -8px rgba(40, 34, 30, 0.5);
+}
+
+.dialItem[aria-current='true'] .dialThumb {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgba(20, 19, 19, 0.85),
+    0 16px 28px -10px rgba(40, 34, 30, 0.6);
+}
+
+.dialNum {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 9px);
+  translate: 0 -50%;
+  color: var(--silver-2);
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums lining-nums;
+  transition: color 0.5s var(--settle);
+}
+
+.dialItem[aria-current='true'] .dialNum {
+  color: var(--white);
+}
+
+.dialArrow {
+  --ar: calc(var(--R) - 30px);
+  position: absolute;
+  left: calc(var(--cx) + var(--ar) * cos(var(--arrow)) - 17px);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--silver-3);
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.7),
+    0 4px 10px -4px rgba(40, 34, 30, 0.35);
+  transition: color 0.45s var(--settle), background-color 0.45s var(--settle), box-shadow 0.45s var(--settle);
+}
+
+.dialArrow[data-dir='-1'] {
+  top: calc(var(--cy) - var(--ar) * sin(var(--arrow)) - 17px);
+}
+
+.dialArrow[data-dir='1'] {
+  top: calc(var(--cy) + var(--ar) * sin(var(--arrow)) - 17px);
+}
+
+.dialArrow:hover,
+.dialArrow:focus-visible {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow:
+    inset 0 1px 0.5px #fff,
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.9),
+    0 6px 14px -4px rgba(40, 34, 30, 0.4);
+}
+
+.dialArrow:active {
+  scale: 0.94;
+}
+
+.dialArrow svg {
+  display: block;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ─────────────────────────────────────────────── the room, lights off ── */
+
+.dark {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: clamp(14px, 3vh, 30px);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.hero[data-dark='1'] .dark {
+  visibility: visible;
+}
+
+.darkTitle {
+  position: relative;
+  margin: 0;
+  color: var(--white);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-weight: 800;
+  font-size: clamp(40px, 8vh, 96px);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* holds the final width so the line never shifts while it is being typed */
+.darkGhost {
+  visibility: hidden;
+}
+
+.darkTyped {
+  position: absolute;
+  top: 0;
+  right: 0;
+  white-space: nowrap;
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.82em;
+  margin-inline-start: 0.1em;
+  vertical-align: -0.1em;
+  background: var(--white);
+  animation: caret 1.05s steps(1) infinite;
+}
+
+@keyframes caret {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.darkHint {
+  margin: 0;
+  color: var(--silver-1);
+  font-family: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+  font-size: 16px;
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .darkHint {
+    display: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────── cursor ── */
+
+.cursorDot,
+.cursorRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s;
+  will-change: transform;
+}
+
+.hero[data-cursor-on='1'] .cursorDot,
+.hero[data-cursor-on='1'] .cursorRing {
+  opacity: 1;
+}
+
+.dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: transform 0.5s var(--settle), opacity 0.35s, box-shadow 0.5s;
+}
+
+.ring {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(20, 19, 19, 0.6);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.15);
+  transition: transform 0.65s var(--settle), opacity 0.4s;
+}
+
+.cursorLabel {
+  position: absolute;
+  top: -5px;
+  left: 32px;
+  color: var(--white);
+  font-family: 'Jost', ui-sans-serif, system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: transform 0.65s var(--settle), opacity 0.4s;
+}
+
+.pulse {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--crimson);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.hero[data-cursor='rug'] .ring,
+.hero[data-cursor='piece'] .ring {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero[data-cursor='rug'] .dot,
+.hero[data-cursor='piece'] .dot {
+  transform: scale(0.55);
+}
+
+.hero[data-cursor='rug'] .cursorLabel[data-for='rug'],
+.hero[data-cursor='piece'] .cursorLabel[data-for='piece'] {
+  opacity: 0.85;
+  transform: none;
+}
+
+/* lamp: a lit point inside a tight ring */
+.hero[data-cursor='lamp'] .ring {
+  opacity: 0.9;
+  transform: scale(0.46);
+}
+
+.hero[data-cursor='lamp'] .dot {
+  background: var(--crimson);
+  box-shadow: 0 0 10px 3px var(--crimson-glow);
+}
+
+.hero[data-cursor='ui'] .dot {
+  transform: scale(0.6);
+  opacity: 0.7;
+}
+
+/* lights off: wherever the pointer is, it is the switch */
+.hero[data-dark='1'] .ring {
+  opacity: 0.7;
+  transform: scale(0.46);
+}
+
+.hero[data-dark='1'] .dot {
+  transform: none;
+  opacity: 0.6;
+  box-shadow: none;
+  background: #f3efe9;
+}
+
+.hero[data-dark='1'] .ring {
+  border-color: rgba(243, 239, 233, 0.5);
+}
+
+.hero[data-dark='1'] .cursorLabel {
+  color: #f3efe9;
+}
+
+.hero[data-dark='1'] .cursorLabel[data-for='rug'] {
+  opacity: 0;
+}
+
+.hero[data-dark='1'] .cursorLabel[data-for='dark'] {
+  left: 20px;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ────────────────────────────────────────────── no-WebGL composition ── */
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(40% 34% at 44% 40%, rgba(255, 252, 246, 0.55), rgba(255, 252, 246, 0) 70%),
+    linear-gradient(180deg, #cfccc7 0%, #d8d5d0 58%, #b5b1ab 58.4%, #1a1818 60.5%, #0e0d0d 100%);
+  transition: opacity 0.9s ease;
+}
+
+.hero[data-dark='1'] .fallback {
+  opacity: 0;
+}
+
+.fbSeam {
+  position: absolute;
+  inset: 64% 0 auto 0;
+  height: 1px;
+  background: rgba(168, 173, 181, 0.14);
+}
+
+.fbColumn,
+.fbStage,
+.fbCone,
+.fbLamp {
+  display: none;
+}
+
+.fbColumn {
+  position: absolute;
+  top: 30%;
+  bottom: 16%;
+  width: 4.4%;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0 1px, rgba(255, 255, 255, 0.05) 1px 4px, rgba(0, 0, 0, 0) 4px 24%),
+    linear-gradient(90deg, #2a251d, #6b604e 40%, #3a332a 74%, #1f1b15);
+}
+
+/* capital: the two protomes read as one broad block at this size */
+.fbColumn::before {
+  content: '';
+  position: absolute;
+  left: -78%;
+  right: -78%;
+  bottom: 100%;
+  height: 24%;
+  border-radius: 46% 46% 8% 8% / 62% 62% 12% 12%;
+  background: linear-gradient(90deg, #2a251d, #7a6e5a 30%, #5d5343 50%, #7a6e5a 70%, #2a251d);
+}
+
+.fbColumn::after {
+  content: '';
+  position: absolute;
+  left: -36%;
+  right: -36%;
+  bottom: -0.5%;
+  height: 9%;
+  border-radius: 30% 30% 6% 6% / 60% 60% 10% 10%;
+  background: linear-gradient(90deg, #2a251d, #6b604e 40%, #3a332a 80%, #1f1b15);
+}
+
+.fbColumn[data-side='l'] {
+  left: 9.8%;
+}
+
+.fbColumn[data-side='r'] {
+  left: 76.3%;
+}
+
+/* the round plinth, seen almost edge-on: a pale drum on a wider base ring.
+   Each tier is a disc whose hard, offset shadow stands in for its wall. */
+.fbStage {
+  position: absolute;
+  left: 20.5%;
+  width: 52%;
+  top: 77%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 30%, #8d9198 0%, #666a71 52%, #3a3d43 100%);
+  box-shadow:
+    0 6px 0 -1px #4a4d53,
+    0 20px 30px -8px rgba(0, 0, 0, 0.95);
+}
+
+.fbStage::before {
+  content: '';
+  position: absolute;
+  inset: -9% 4.6% 12% 4.6%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 38% 32%, #d8dbe0 0%, #a8acb3 50%, #73777e 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 9px 0 -1px #80848b,
+    0 13px 9px -3px rgba(0, 0, 0, 0.7);
+}
+
+/* the engraved line on the top */
+.fbStage::after {
+  content: '';
+  position: absolute;
+  inset: -1% 13% 21% 13%;
+  border-radius: 50%;
+  border: 1px solid rgba(40, 43, 48, 0.28);
+}
+
+.fbRug {
+  position: absolute;
+  left: 20.4%;
+  width: 48.6%;
+  top: 22%;
+  aspect-ratio: 2000 / 1117;
+  filter: drop-shadow(0 14px 14px rgba(40, 30, 28, 0.35));
+}
+
+.fbRug img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  transition: opacity 0.6s ease;
+}
+
+.fbCone {
+  position: absolute;
+  top: 9%;
+  left: 15%;
+  width: 56%;
+  height: 62%;
+  background: linear-gradient(140deg, rgba(244, 246, 248, 0.1), rgba(244, 246, 248, 0.02) 46%, rgba(244, 246, 248, 0) 70%);
+  clip-path: polygon(0 0, 100% 34%, 100% 100%, 22% 100%);
+  filter: blur(18px);
+}
+
+.fbLamp {
+  position: absolute;
+  top: 0;
+  left: 12.5%;
+  width: clamp(60px, 6.4vw, 118px);
+  height: 16%;
+}
+
+.fbLamp svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ──────────────────────────────────────────── smaller landscape frames ── */
+
+@media (max-width: 1180px) {
+  .dial {
+    --R: 168px;
+    --peek: 114px;
+    --orbit: 112px;
+    --thumb: 64px;
+  }
+
+  .dialNum {
+    font-size: 11px;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────── small ── */
+
+@media (max-aspect-ratio: 23 / 20) {
+  /* the story drops beneath the piece, over the floor and its reflection; the
+     dial lies in the bottom edge under it */
+  .story {
+    top: auto;
+    bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+    right: 0;
+    left: 0;
+    width: min(100% - 2 * var(--gutter-x), 460px);
+    margin-inline: auto;
+  }
+
+  .title {
+    font-size: clamp(21px, 3.2vh, 32px);
+  }
+
+  /* the card, made for a phone: tighter, the words read at a glance */
+  .piece {
+    margin-top: 8px;
+    padding: 14px 16px 16px;
+    border-radius: 22px;
+  }
+
+  .pieceMeta {
+    margin-bottom: 2px;
+    font-size: 11.5px;
+  }
+
+  .pieceTitle {
+    margin-bottom: 6px;
+    font-size: clamp(18px, 5vw, 22px);
+    line-height: 1.45;
+  }
+
+  /* the description runs on as one paragraph, two lines at most */
+  .pieceText {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: clamp(12.5px, 3.5vw, 14px);
+    line-height: 1.95;
+  }
+
+  .pieceText [data-line] {
+    display: inline;
+  }
+
+  /* what it is made of and how big, as two small beads of glass */
+  .specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    border: 0;
+    font-size: 11.5px;
+    line-height: 1;
+  }
+
+  .specs li[data-line] {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 11px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.95),
+      inset 0 0 0 0.5px rgba(20, 19, 19, 0.08);
+    color: var(--silver-2);
+    font-weight: 500;
+  }
+
+  .specs li[data-line]:nth-child(n + 3) {
+    display: none;
+  }
+
+  .buyRow {
+    margin-top: 12px;
+  }
+
+  .buy {
+    height: 46px;
+    font-size: 15px !important;
+  }
+
+  /* the wheel lies in the bottom edge, turned a quarter: crown up */
+  .glassWrap {
+    top: auto;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .dial {
+    --R: 190px;
+    --peek: 118px;
+    --orbit: 124px;
+    --thumb: 70px;
+    --arrow: 49deg;
+    --cx: var(--R);
+    --cy: var(--R);
+    width: calc(var(--R) * 2);
+    height: var(--peek);
+  }
+
+  .dialNotch {
+    left: calc(var(--cx) - 0.5px);
+    top: 0;
+    width: 1px;
+    height: 9px;
+  }
+
+  .dialNum {
+    top: auto;
+    right: auto;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .dialArrow {
+    top: calc(var(--cy) - var(--ar) * cos(var(--arrow)) - 17px);
+  }
+
+  .dialArrow[data-dir='-1'] {
+    top: calc(var(--cy) - var(--ar) * cos(var(--arrow)) - 17px);
+    left: calc(var(--cx) - var(--ar) * sin(var(--arrow)) - 17px);
+  }
+
+  .dialArrow[data-dir='1'] {
+    top: calc(var(--cy) - var(--ar) * cos(var(--arrow)) - 17px);
+    left: calc(var(--cx) + var(--ar) * sin(var(--arrow)) - 17px);
+  }
+
+  .dialArrow svg {
+    rotate: -90deg;
+  }
+
+  .darkTitle {
+    font-size: clamp(44px, 13vw, 84px);
+  }
+
+  .fbColumn {
+    display: none;
+  }
+
+  .fbRug {
+    left: 9%;
+    width: 82%;
+    top: 20%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero *,
+  .hero *::before,
+  .hero *::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}
